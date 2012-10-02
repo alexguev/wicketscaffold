@@ -10,7 +10,7 @@
 (defn generate-wicket-scaffold
   "generates CRUD scaffolding for the Hibernate entity identified by 'clazz'"
   [clazz & more]
-  (binding [*options* (apply hash-map more)]
+  (binding [*options* (into default-options (apply hash-map more))]
     (generate (convert clazz))))
 
 (defn convert
