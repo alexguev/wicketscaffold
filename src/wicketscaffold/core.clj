@@ -1,51 +1,57 @@
 (ns wicketscaffold.core
   (:use [clojure.java.io])
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            [wicketscaffold.html :as html]
+            [wicketscaffold.java :as java]))
 
 (def ^:dynamic *options* {})
 
 (def default-options {:output "temp"}) ;todo: use
 
-(declare convert generate)
+(defn- to-path [package] (s/replace package "." "/"))
+
+(defprotocol Writable
+  "tbd"
+  (write [x]))
+
+(declare parse verify transform generate)
 (defn generate-wicket-scaffold
   "generates CRUD scaffolding for the Hibernate entity identified by 'clazz'"
   [clazz & more]
   (binding [*options* (into default-options (apply hash-map more))]
-    (generate (convert clazz))))
+    (-> (parse clazz)
+        (verify)
+        (transform)
+        (generate))))
 
-(defn convert
+(defn generate [xs]
+  (doseq [x xs] (write x)))
+
+(defn parse
   "tbd"
   [clazz]
   {:name (.getSimpleName clazz)
    :package (.getName (.getPackage clazz))})
 
-(declare generate-html generate-page generate-vo)
-(defn generate
+(defrecord WicketHtmlPage [path name]
+  Writable
+  (write [p]
+    (html/generate path name)))
+
+(defrecord WicketJavaPage [package name]
+  Writable
+  (write [x]
+    (java/generate package name)))
+
+(defn transform
   "tbd"
-  [m]
-  (generate-html m)
-  (generate-page m)
-  (generate-vo m))
+  [{:keys [name package] :as m}]
+  (when m
+    [(WicketHtmlPage. (to-path package) (str name "Page.html"))
+     (WicketJavaPage. package (str name "Page.java"))]))
 
-(defn- to-path [package] (s/replace package "." "/"))
-
-(defn generate-file
-  "tbd"
-  [{:keys [name package] :as m} file-name-suffix f]
-  (let [{:keys [output]} *options*
-        folder (file output (to-path package))]
-    (.mkdirs folder)
-    (with-open [w (writer (file folder (str name file-name-suffix)))]
-      (.write w (f m)))))
-
-(defn generate-html [m]
-  (generate-file m "Page.html" (fn [m] "<html>")))
-
-(defn generate-page [m]
-  (generate-file m "Page.java" (fn [{:keys [name package]}] (str "package " package ";"))))
-
-(defn generate-vo [m]
-  (generate-file m "VO.java" (fn [{:keys [name package]}] (str "package " package ";"))))
+(defn verify [m]
+  m)
 
 (defn -main
   ""

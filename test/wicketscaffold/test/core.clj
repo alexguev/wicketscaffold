@@ -13,4 +13,7 @@
                       (file-exists "temp" "wicketscaffold/test/core" "FakeHibernateEntityPage.html")
                       (file-exists "temp" "wicketscaffold/test/core" "FakeHibernateEntityVO.java"))))))
 
-;
+
+(deftest test-verify
+  (testing "fail on hibernate entities"
+    (is (false? (verify {})))))

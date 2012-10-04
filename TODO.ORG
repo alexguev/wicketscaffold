@@ -1,0 +1,6 @@
+TODO
+- [ ] rename FakeHibernateEntity to FooVO 
+- [ ] add validation 
+  - [ ] must not have @Entity annotation
+  - [ ] must end of VO
+
