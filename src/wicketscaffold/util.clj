@@ -5,6 +5,9 @@
 
 (defn to-path [package] (s/replace package "." "/"))
 
+(defn when-message [x m]
+  (when x (println m) true))
+
 (defn generate-file
   "tbd"
   [{:keys [path name] :as m} f]
