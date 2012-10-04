@@ -1,41 +1,18 @@
 (ns wicketscaffold.core
-  (:use [clojure.java.io])
-  (:require [clojure.string :as s]
-            [wicketscaffold.html :as html]
+  (:use [clojure.java.io]
+        [wicketscaffold.util :only [to-path]])
+  (:require [wicketscaffold.html :as html]
             [wicketscaffold.java :as java]))
 
-(def ^:dynamic *options* {})
-
-(def default-options {:output "temp"}) ;todo: use
-
-(defn- to-path [package] (s/replace package "." "/"))
+; for study group, describe the solution in plain english first
 
 (defprotocol Writable
   "tbd"
   (write [x]))
 
-(declare parse verify transform generate)
-(defn generate-wicket-scaffold
-  "generates CRUD scaffolding for the Hibernate entity identified by 'clazz'"
-  [clazz & more]
-  (binding [*options* (into default-options (apply hash-map more))]
-    (-> (parse clazz)
-        (verify)
-        (transform)
-        (generate))))
-
-(defn generate [xs]
-  (doseq [x xs] (write x)))
-
-(defn parse
-  "tbd"
-  [clazz]
-  {:name (.getSimpleName clazz)
-   :package (.getName (.getPackage clazz))})
-
 (defrecord WicketHtmlPage [path name]
   Writable
-  (write [p]
+  (write [x]
     (html/generate path name)))
 
 (defrecord WicketJavaPage [package name]
@@ -43,15 +20,39 @@
   (write [x]
     (java/generate package name)))
 
+(declare parse validate transform generate)
+(defn generate-wicket-scaffold
+  "generates CRUD scaffolding for the Hibernate entity identified by 'clazz'"
+  [clazz]
+  (-> (parse clazz)
+      (validate)
+      (transform)
+      (generate)))
+
+(defn parse
+  "tbd"
+  [clazz]
+  {:name (.getSimpleName clazz)
+   :package (.getName (.getPackage clazz))
+   :annotations (.getAnnotations clazz)})
+
+(defn validate [{:keys [name annotations] :as x}]
+  "evaluates to nil if x is not valid, evaluates to x otherwise"
+  (when-not (or (when (some (partial = Deprecated) annotations)
+                  (do (println "[" name "] "  "a hibernate entity is not valid") true))
+                (when (not (re-find #".*VO$" name))
+                  (do (println "[" name "] "  "only classes ending in VO are valid") true)))
+    x))
+
 (defn transform
   "tbd"
-  [{:keys [name package] :as m}]
-  (when m
+  [{:keys [name package] :as x}]
+  (when x
     [(WicketHtmlPage. (to-path package) (str name "Page.html"))
      (WicketJavaPage. package (str name "Page.java"))]))
 
-(defn verify [m]
-  m)
+(defn generate [xs]
+  (doseq [x xs] (write x)))
 
 (defn -main
   ""

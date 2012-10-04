@@ -4,16 +4,15 @@
         [clojure.java.io :only [file]])
   (:import [wicketscaffold.test.core FakeHibernateEntity]))
 
-(defn file-exists [parent child & more]
-  (.exists (apply file (into [parent child] more)))) 
-
-(deftest test-generate-wicket-scaffold
-  (is (true? (do (generate-wicket-scaffold FakeHibernateEntity :output "temp")
-                 (and (file-exists "temp"  "wicketscaffold/test/core" "FakeHibernateEntityPage.java")
-                      (file-exists "temp" "wicketscaffold/test/core" "FakeHibernateEntityPage.html")
-                      (file-exists "temp" "wicketscaffold/test/core" "FakeHibernateEntityVO.java"))))))
-
-
 (deftest test-verify
-  (testing "fail on hibernate entities"
-    (is (false? (verify {})))))
+  
+  (testing "a hibernate entity is not valid" ;TODO use correct annotation
+    (is (nil? (validate {:name "NameVO" :package "some.package" :annotations [Deprecated]})))
+    (is (= {:name "NameVO" :package "some.package" :annotations []}
+           (validate {:name "NameVO" :package "some.package" :annotations []}))))
+  
+  (testing "only classes ending in VO are valid"
+    (is (nil? (validate {:name "Name" :package "some.package" :annotations []})))
+    (is (nil? (validate {:name "NameVO1" :package "some.package" :annotations []})))
+    (is (= {:name "NameVO" :package "some.package" :annotations []}
+           (validate {:name "NameVO" :package "some.package" :annotations []})))))

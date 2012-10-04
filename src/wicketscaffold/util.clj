@@ -1,9 +1,14 @@
-(ns wicketscaffold.util)
+(ns wicketscaffold.util
+  (:use [clojure.java.io])
+  (:require [clojure.string :as s]))
+
+
+(defn to-path [package] (s/replace package "." "/"))
 
 (defn generate-file
   "tbd"
   [{:keys [path name] :as m} f]
-  (let [{:keys [output]} *options*
+  (let [{:keys [output]} {}
         folder (file output path)]
     (.mkdirs folder)
     (with-open [w (writer (file folder name))]
