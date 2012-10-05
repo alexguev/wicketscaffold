@@ -7,5 +7,6 @@
             [lein-marginalia "0.7.1"]]
   :java-source-paths ["java"]
   :compile-path "target/classes"
-  :dependencies [[org.clojure/clojure "1.4.0"]]
+  :dependencies [[org.clojure/clojure "1.4.0"]
+                 [hiccup "1.0.1"]]
 )

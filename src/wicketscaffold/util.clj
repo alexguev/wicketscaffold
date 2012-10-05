@@ -10,9 +10,9 @@
 
 (defn generate-file
   "tbd"
-  [{:keys [path name] :as m} f]
-  (let [{:keys [output]} {}
+  [path name content]
+  (let [{:keys [output]} {:output "temp"}
         folder (file output path)]
     (.mkdirs folder)
     (with-open [w (writer (file folder name))]
-      (.write w (f m)))))
+      (.write w content))))

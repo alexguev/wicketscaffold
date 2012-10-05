@@ -16,3 +16,6 @@
     (is (nil? (validate {:name "NameVO1" :package "some.package" :annotations []})))
     (is (= {:name "NameVO" :package "some.package" :annotations []}
            (validate {:name "NameVO" :package "some.package" :annotations []})))))
+
+
+;FIXME test parse
