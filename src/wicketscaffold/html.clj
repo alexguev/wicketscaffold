@@ -15,5 +15,5 @@
          [:head [:title title]]
          [:body content]]))
 
-(defn transform [fields]
-  [:table])
+(defn transform [properties]
+  (into [:table] (for [p properties] [:tr [:td]])))
