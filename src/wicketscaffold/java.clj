@@ -1,4 +1,5 @@
-(ns wicketscaffold.java)
+(ns wicketscaffold.java
+  (:use [wicketscaffold.util :only [to-path]]))
 
-(defn generate [package name properties]
-  (println (str "generating Java class named " package "." name)))
+(defn generate [{:keys [package name properties] :as clazz}]
+  {:file-path (to-path package) :file-name (str name "Page.java") :content "TBD!"})

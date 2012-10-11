@@ -2,13 +2,12 @@
   (:use [clojure.java.io])
   (:require [clojure.string :as s]))
 
-
 (defn to-path [package] (s/replace package "." "/"))
 
 (defn when-message [x m]
   (when x (println m) true))
 
-(defn generate-file
+(defn write-to-file
   "tbd"
   [path name content]
   (let [{:keys [output]} {:output "temp"}
