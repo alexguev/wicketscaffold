@@ -8,5 +8,6 @@
   :java-source-paths ["java"]
   :compile-path "target/classes"
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [hiccup "1.0.1"]]
+                 [hiccup "1.0.1"]
+                 [net.sf.jtidy/jtidy "r938"]]
 )
