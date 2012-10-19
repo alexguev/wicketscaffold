@@ -7,15 +7,17 @@
 
 ; for study group, describe the solution in plain english first
 
-(declare parse validate transform generate)
+(def default-options {:output "temp"}) 
+
+(declare parse validate transform generate write)
 (defn generate-wicket-scaffold
   "generates CRUD scaffolding for the Hibernate entity identified by 'clazz'"
-  [clazz]
+  [clazz & options]
   (-> (parse clazz)
       (validate)
       (transform)
       (generate)
-      (write)))
+      (write (:output (into default-options (apply hash-map options))))))
 
 (defn parse ; come up with a better name
   "'properties' is a vector of maps." 
@@ -46,9 +48,9 @@
   ""
   (map #(%) fs))
 
-(defn write [xs]
+(defn write [xs output]
   (doseq [x xs]
-    (let [f (file "temp" (:file-path x) (:file-name x))]
+    (let [f (file output (:file-path x) (:file-name x))]
       (make-parents f)
       (spit f (:content x)))))
 
@@ -57,4 +59,4 @@
   [& args]
   (let [name (first args)
         clazz (Class/forName name)]
-    (generate-wicket-scaffold clazz)))
+    (generate-wicket-scaffold clazz :output "temp")))

@@ -18,4 +18,14 @@
            (validate {:name "NameVO" :package "some.package" :annotations []})))))
 
 
-;FIXME test parse
+(deftest test-write
+  (is (= "Some Content"
+         (do (write [{:file-path "Foo" :file-name "Bar" :content "Some Content"}] "temp")
+             (slurp (file "temp" "Foo" "Bar"))))))
+
+(defn my-fixture [f]
+  (f)  
+  (println f)
+  )
+
+(use-fixtures :each my-fixture)

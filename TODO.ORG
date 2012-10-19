@@ -1,6 +1,6 @@
 TODO
-- [ ] rename FakeHibernateEntity to FooVO 
-- [ ] add validation 
-  - [ ] must not have @Entity annotation
-  - [ ] must end of VO
+- [ ] create hg project (hg clone ?)
+- [ ] extract write method from generate-wicket-scaffold
+- [ ] figure out tear down
+
 
